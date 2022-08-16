@@ -49,18 +49,22 @@ const makeRequest = async (config) => {
   } catch (error) {
     if (error.response) {
       console.error('Request failed with status #%d and error #%d', error.response.status, error.response.data);
-      return { success: false, status: error.response.status, data: error.response.data };
+      const e = new Error(
+        { success: false, status: error.response.status, data: error.response.data },
+      );
+      throw e;
     }
 
     console.error('There was an unexpected error', error);
-    return { success: false, status: undefined, data: error };
+    const e = new Error({ success: false, status: undefined, data: error });
+    throw e;
   }
 };
 
 const getAllByDate = async (year) => {
   const payloadConfig = createGetDataBodyConfig(year);
-  const resultOfcreate = await makeRequest(payloadConfig);
-  return resultOfcreate;
+  const resultOfGet = await makeRequest(payloadConfig);
+  return resultOfGet;
 };
 
 const createRates = async (rates) => {
