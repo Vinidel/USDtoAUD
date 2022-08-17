@@ -6,7 +6,7 @@ const URLS = {
   findOne: '',
 };
 
-const API_KEY = 'oQFNv1pOj74PQrKcOlzpdY98fWXo3bXh1FxXBkccqc6ZQml1mn92kH2584I5ivVJ';
+const { API_KEY } = process.env;
 
 const createDataBodyWithConfig = (action) => (payload) => {
   const data = {
@@ -54,7 +54,7 @@ const makeRequest = async (config) => {
     }
 
     console.error('There was an unexpected error');
-    const e = { success: false, status: 500};
+    const e = { success: false, status: 500 };
     throw e;
   }
 };
