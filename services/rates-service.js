@@ -45,18 +45,16 @@ const makeRequest = async (config) => {
     console.log('Making request', config);
     const r = await axios(config);
     console.log('Request finished successfully');
-    return { success: true, status: r.status, data: r.data };
+    return { success: true, status: r.status, data: r.data.documents ? r.data.documents : r.data };
   } catch (error) {
     if (error.response) {
       console.error('Request failed with status #%d and error #%d', error.response.status, error.response.data);
-      const e = new Error(
-        { success: false, status: error.response.status, data: error.response.data },
-      );
+      const e = { success: false, status: error.response.status, data: error.response.data };
       throw e;
     }
 
-    console.error('There was an unexpected error', error);
-    const e = new Error({ success: false, status: undefined, data: error });
+    console.error('There was an unexpected error');
+    const e = { success: false, status: 500};
     throw e;
   }
 };
