@@ -19,7 +19,7 @@ const createDataBodyWithConfig = (action) => (payload) => {
     data.document = payload;
   }
 
-  if (action === 'find') {
+  if (action === 'find' && payload) {
     data.filter = {
       date: { $regex: payload },
     };
@@ -53,7 +53,7 @@ const makeRequest = async (config) => {
       throw e;
     }
 
-    console.error('There was an unexpected error');
+    console.error('There was an unexpected error', error);
     const e = { success: false, status: 500 };
     throw e;
   }
