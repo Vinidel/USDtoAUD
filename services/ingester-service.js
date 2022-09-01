@@ -28,10 +28,12 @@ const HEADER_NAMES = [
   'Type',
   'ISIN',
   'Notes',
-  'AUD',
+  'Profit or loss in AUD',
+  'AUD Rate',
+  'Fee in AUD',
+  'Cost in AUD',
   'TYPE (SHORT/LONG)',
-  'ProfitInAud',
-]
+];
 
 const extractDateFromString = (dateString = '01/12/1970 00:00:00') => dateString.substring(0, 10).split('/');
 
@@ -67,9 +69,15 @@ const readAndParseEtoro = async (filePath) => csv().fromFile(filePath)
         new Date(`${closeYYYY}-${closeMM}-${closeDD}`),
         new Date(`${openYYYY}-${openMM}-${openDD}`),
       );
+      
+      const parsedToFloatAmount = Number.parseFloat(j.Amount.replace(',', '');
 
-      j.ProfitInAud = (rate.aud * j.Profit).toFixed(2);
+      j['Profit or loss in AUD'] = (rate.aud * j.Profit).toFixed(2);
+      j['AUD Rate'] = rate.aud;
+      j['Fee in AUD'] = (rate.aud * j['Rollover Fees and Dividends']).toFixed(2);
+      j['Cost in AUD'] = (rate.aud * parsedToFloatAmount).toFixed(2);
       j['TYPE (SHORT/LONG)'] = differenceInDays >= DAYS_IN_A_YEAR ? 'LONG' : 'SHORT';
+      console.log(j);
       return j;
     });
     const v = await Promise.all(requestPromises);
@@ -82,3 +90,6 @@ module.exports = {
   readAndParseEtoro,
   readAndParseRates,
 };
+
+'1,070.00'
+1.3887
