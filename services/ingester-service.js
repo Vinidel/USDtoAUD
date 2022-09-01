@@ -69,12 +69,14 @@ const readAndParseEtoro = async (filePath) => csv().fromFile(filePath)
         new Date(`${closeYYYY}-${closeMM}-${closeDD}`),
         new Date(`${openYYYY}-${openMM}-${openDD}`),
       );
-      
-      const parsedToFloatAmount = Number.parseFloat(j.Amount.replace(',', '');
 
-      j['Profit or loss in AUD'] = (rate.aud * j.Profit).toFixed(2);
+      const parsedToFloatAmount = Number.parseFloat(j.Amount.replaceAll(',', ''));
+      const parsedToFloatProfit = Number.parseFloat(j.Profit.replaceAll(',', ''));
+      const parsedToFloatFees = Number.parseFloat(j['Rollover Fees and Dividends'].replaceAll(',', ''));
+
       j['AUD Rate'] = rate.aud;
-      j['Fee in AUD'] = (rate.aud * j['Rollover Fees and Dividends']).toFixed(2);
+      j['Profit or loss in AUD'] = (rate.aud * parsedToFloatProfit).toFixed(2);
+      j['Fee in AUD'] = (rate.aud * parsedToFloatFees).toFixed(2);
       j['Cost in AUD'] = (rate.aud * parsedToFloatAmount).toFixed(2);
       j['TYPE (SHORT/LONG)'] = differenceInDays >= DAYS_IN_A_YEAR ? 'LONG' : 'SHORT';
       console.log(j);
@@ -90,6 +92,3 @@ module.exports = {
   readAndParseEtoro,
   readAndParseRates,
 };
-
-'1,070.00'
-1.3887
