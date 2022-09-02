@@ -1,4 +1,7 @@
 const axios = require('axios');
+const dateFns = require('date-fns');
+const dateFnsTimeZone = require('date-fns-tz');
+const puppeteer = require('puppeteer');
 
 const URLS = {
   find: 'https://data.mongodb-api.com/app/data-tapjq/endpoint/data/v1/action/find',
@@ -71,7 +74,41 @@ const createRates = async (rates) => {
   return resultOfcreate;
 };
 
+const createScrapeUrl = (date) => `https://www.exchangerates.org.uk/USD-AUD-${date}-exchange-rate-history.html`;
+
+const scrapeRateByDate = async (date = new Date()) => {
+  const formattedDate = dateFns.format(date, 'dd_MM_yyyy');
+  const url = createScrapeUrl(formattedDate);
+
+  console.log('Started scrapping for date', formattedDate);
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+
+  await page.goto(url);
+  const element = await page.waitForSelector('div.sectionx div.row div p');
+  const text = await page.evaluate((el) => el.textContent, element);
+  const stringAudRate = text.substring(15, 20);
+
+  console.log('Finished scrapping');
+  console.log('AUD value is', text.substring(15, 20));
+
+  return Number.parseFloat(stringAudRate);
+};
+
+const scrapeAndCreateRate = async () => {
+  const zonedDate = dateFnsTimeZone.utcToZonedTime(new Date(), 'Australia/NSW');
+  const yesterdayDate = dateFns.sub(zonedDate, { days: 1 });
+  const audRate = await scrapeRateByDate(yesterdayDate);
+  const formattedDate = yesterdayDate.toISOString();
+  const ratesObject = {
+    date: formattedDate,
+    AUD: audRate,
+  };
+  await createRates(ratesObject);
+};
+
 module.exports = {
   createRates,
   getAllByDate,
+  scrapeAndCreateRate,
 };

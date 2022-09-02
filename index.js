@@ -18,7 +18,7 @@ async function t() {
 
   const fileExtension = filePath.substring(filePath.length - 3);
   if (!supportedFiles.includes(fileExtension)) {
-    console.error(`${FgRed}%s${BgBlack}`, `Brow I only except ${supportedFiles.join(',')}`);
+    console.error(`${FgRed}%s${BgBlack}`, `Bro I only except ${supportedFiles.join(',')}`);
     // eslint-disable-next-line no-useless-return
     return;
   }

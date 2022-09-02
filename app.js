@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const ratesRouter = require('./routes/rates-route');
+const recurrentService = require('./services/recurrent-service');
 
 const app = express();
 
@@ -18,7 +19,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/rates', ratesRouter);
-
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
   next(createError(404));
@@ -34,5 +34,5 @@ app.use((err, req, res) => {
   res.status(err.status || 500);
   res.json({ message: 'error' });
 });
-
+recurrentService.createScheduler();
 module.exports = app;
